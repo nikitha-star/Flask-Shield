@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Scanner - FlaskShield{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><div><h1>New scan</h1><p class="sub">Static analysis only. Uploaded code is never executed.</p></div></div>
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <form id="upform" method="post" action="{{ url_for('main.scan_upload') }}" enctype="multipart/form-data" class="card-fs p-4">
+        <label for="file" class="drop" id="drop">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+          <strong id="dname">Drop a file here or click to browse</strong>
+          <span>.zip project, or .py / .env / .ini / .cfg / .json / .yaml (max 20 MB)</span>
+        </label>
+        <input id="file" class="d-none" type="file" name="project" required accept=".zip,.py,.env,.ini,.cfg,.json,.yml,.yaml">
+        <button class="btn-fs w-100 mt-3" id="go">Run scan</button>
+      </form>
+    </div>
+    <div class="col-lg-5">
+      <div class="card-fs p-4 h-100">
+        <h5 class="mb-1">Or scan a bundled sample</h5>
+        <p class="muted small">Quickly see how reports look.</p>
+        {% for s in samples %}
+        <form method="post" action="{{ url_for('main.scan_sample', name=s) }}" class="mb-2">
+          <button class="sample-btn"><span>{{ s }}</span><span>→</span></button>
+        </form>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% if recent %}
+  <h4 class="mt-5 mb-3">Recent scans</h4>
+  {% set scans = recent %}{% include "_table.html" %}
+  {% endif %}
+</div>
+<script>
+const f=document.getElementById('file'),d=document.getElementById('drop'),n=document.getElementById('dname');
+f.addEventListener('change',()=>{if(f.files[0]){n.textContent=f.files[0].name;d.classList.add('has')}});
+['dragenter','dragover'].forEach(e=>d.addEventListener(e,x=>{x.preventDefault();d.classList.add('over')}));
+['dragleave','drop'].forEach(e=>d.addEventListener(e,x=>{x.preventDefault();d.classList.remove('over')}));
+d.addEventListener('drop',x=>{if(x.dataTransfer.files.length){f.files=x.dataTransfer.files;f.dispatchEvent(new Event('change'))}});
+document.getElementById('upform').addEventListener('submit',()=>{const b=document.getElementById('go');b.textContent='Scanning…';b.disabled=true;});
+</script>
+{% endblock %}

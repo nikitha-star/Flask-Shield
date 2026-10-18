@@ -1,0 +1,25 @@
+<div class="card-fs p-0 table-wrap">
+<table class="tbl">
+  <thead><tr><th>#</th><th>Target</th><th>Date (UTC)</th><th>Score</th><th>Findings</th><th></th></tr></thead>
+  <tbody>
+  {% for s in scans %}
+    <tr>
+      <td class="muted">{{ s.id }}</td>
+      <td><a class="tlink" href="{{ url_for('main.scan_detail', scan_id=s.id) }}">{{ s.name }}</a> <span class="chip">{{ s.source }}</span></td>
+      <td class="muted">{{ s.created_at }}</td>
+      <td><span class="score {{ 'good' if s.score >= 80 else ('mid' if s.score >= 50 else 'bad') }}">{{ s.score }}</span></td>
+      <td>
+        {% for n, c in [(s.critical,'critical'),(s.high,'high'),(s.medium,'medium'),(s.low,'low')] %}{% if n %}<span class="badge-sev sev-{{ c }}">{{ n }} {{ c|capitalize }}</span> {% endif %}{% endfor %}
+        {% if not (s.critical or s.high or s.medium or s.low) %}<span class="muted">None</span>{% endif %}
+      </td>
+      <td class="text-end">
+        <form method="post" action="{{ url_for('main.delete', scan_id=s.id) }}" onsubmit="return confirm('Delete scan {{ s.id }}?')">
+          <button class="btn-del">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {% else %}<tr><td colspan="6" class="empty">No scans yet. <a href="{{ url_for('main.new_scan') }}">Run your first scan</a>.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>

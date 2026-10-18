@@ -1,0 +1,44 @@
+{% macro badge(sev) -%}<span class="badge-sev sev-{{ sev|lower }}">{{ sev }}</span>{%- endmacro %}
+{% macro summary(scan) -%}
+<div class="summary">
+  <div class="card-fs ring-card">
+    <svg viewBox="0 0 120 120" width="130" height="130">
+      <circle cx="60" cy="60" r="52" class="ring-bg"/>
+      <circle cx="60" cy="60" r="52" class="ring {{ 'good' if scan.score >= 80 else ('mid' if scan.score >= 50 else 'bad') }}"
+              stroke-dasharray="{{ (326.7 * scan.score / 100)|round(1) }} 326.7" transform="rotate(-90 60 60)"/>
+      <text x="60" y="66" text-anchor="middle" class="ring-num">{{ scan.score }}</text>
+    </svg>
+    <div class="muted small">Security score</div>
+  </div>
+  <div class="sev-grid">
+    {% for n, c in [(scan.critical,'critical'),(scan.high,'high'),(scan.medium,'medium'),(scan.low,'low')] %}
+    <div class="card-fs sev-tile sev-t-{{ c }}"><b>{{ n }}</b><span>{{ c|capitalize }}</span></div>
+    {% endfor %}
+  </div>
+</div>
+{%- endmacro %}
+{% macro findings_list(findings) -%}
+<div class="filters" id="filters">
+  <button class="on" data-f="all">All</button>
+  {% for c in ['critical','high','medium','low'] %}<button data-f="{{ c }}">{{ c|capitalize }}</button>{% endfor %}
+</div>
+{% for f in findings %}
+<div class="card-fs finding sev-b-{{ f.severity|lower }}" data-sev="{{ f.severity|lower }}">
+  <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+    <h5>{{ f.title }}</h5>
+    <div>{{ badge(f.severity) }} <span class="mono muted">{{ f.rule_id }}</span></div>
+  </div>
+  <div class="loc mono">{{ f.file }}{% if f.line %}:{{ f.line }}{% endif %}</div>
+  <p>{{ f.description }}</p>
+  <div class="fix"><b>Recommended fix</b>{{ f.recommendation }}</div>
+</div>
+{% else %}
+<div class="card-fs ok-box">✓ No issues detected by the current rule set.</div>
+{% endfor %}
+<script>
+document.querySelectorAll('#filters button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#filters button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.finding').forEach(c=>c.style.display=(b.dataset.f==='all'||c.dataset.sev===b.dataset.f)?'':'none');
+}));
+</script>
+{%- endmacro %}

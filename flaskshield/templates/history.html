@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}History - FlaskShield{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><div><h1>Scan history</h1><p class="sub">{{ scans|length }} scan{{ '' if scans|length == 1 else 's' }} recorded</p></div>
+  <a class="btn-fs" href="{{ url_for('main.new_scan') }}">New scan</a></div>
+  {% include "_table.html" %}
+</div>
+{% endblock %}

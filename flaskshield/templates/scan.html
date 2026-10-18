@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "_findings.html" as ui %}
+{% block title %}Scan {{ scan.id }} - FlaskShield{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head">
+    <div><a class="back" href="{{ url_for('main.history') }}">← History</a>
+      <h1>{{ scan.name }}</h1>
+      <p class="sub">Scan #{{ scan.id }} · {{ scan.created_at }} UTC · {{ scan.files_scanned }} files analyzed</p></div>
+    <a class="btn-fs" href="{{ url_for('main.report', scan_id=scan.id) }}">Download report</a>
+  </div>
+  {{ ui.summary(scan) }}
+  {% if scan.errors %}<div class="flash flash-warning"><strong>Files that could not be parsed:</strong><pre class="mb-0">{{ scan.errors }}</pre></div>{% endif %}
+  <h4 class="mt-4 mb-3">Findings</h4>
+  {{ ui.findings_list(findings) }}
+</div>
+{% endblock %}

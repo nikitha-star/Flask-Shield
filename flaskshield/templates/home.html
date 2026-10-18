@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <span class="pill">Flask security, before production</span>
+        <h1 class="hero-title">Find insecure Flask config <span class="grad">before attackers do.</span></h1>
+        <p class="lead-fs">Upload a project or config file and FlaskShield audits it for debug mode, weak secret keys, unsafe cookies, missing security headers and leaked credentials, with a clear fix for each issue.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a class="btn-fs" href="{{ url_for('main.new_scan') }}">Start a scan →</a>
+          <a class="btn-ghost" href="#how">How it works</a>
+        </div>
+        <div class="trust">
+          <span>✓ No code execution</span><span>✓ Zip &amp; single-file uploads</span><span>✓ Downloadable reports</span>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="mock">
+          <div class="mock-bar"><i></i><i></i><i></i><span>app.py</span></div>
+          <pre class="mock-code"><span class="ln">1</span> <span class="k">app</span> = Flask(__name__)
+<span class="ln">2</span> <span class="k">app</span>.secret_key = <span class="s">"secret"</span>
+<span class="ln">3</span> <span class="k">app</span>.config[<span class="s">"DEBUG"</span>] = <span class="bad">True</span>
+<span class="ln">4</span> <span class="k">app</span>.config[<span class="s">"DB_PASSWORD"</span>] = <span class="s">"hunter2"</span></pre>
+          <div class="mock-find sev-b-critical"><b>Critical</b> Debug mode enabled <em>FS001</em></div>
+          <div class="mock-find sev-b-high"><b>High</b> Weak or default SECRET_KEY <em>FS002</em></div>
+          <div class="mock-find sev-b-high"><b>High</b> Hardcoded sensitive setting <em>FS005</em></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="container">
+    <div class="stat-row">
+      <div><b>5</b><span>Rule groups</span></div>
+      <div><b>9+</b><span>Individual checks</span></div>
+      <div><b>6</b><span>File formats parsed</span></div>
+      <div><b>0</b><span>Lines of code run</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="container">
+    <h2 class="h-section">How it works</h2>
+    <p class="sub">Three steps from upload to a prioritised fix list.</p>
+    <div class="row g-4 mt-1">
+      <div class="col-md-4"><div class="card-fs step"><div class="num">1</div><h5>Upload</h5><p>Drop in a zipped Flask project or a single <code>.py</code>, <code>.env</code>, <code>.ini</code>, <code>.json</code> or <code>.yaml</code> file.</p></div></div>
+      <div class="col-md-4"><div class="card-fs step"><div class="num">2</div><h5>Analyze</h5><p>The code is parsed statically with Python's AST and config parsers, then run against the rule set.</p></div></div>
+      <div class="col-md-4"><div class="card-fs step"><div class="num">3</div><h5>Fix</h5><p>Review severity-ranked findings with recommendations, then download a report and track scans over time.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="container">
+    <h2 class="h-section">What FlaskShield checks</h2>
+    <p class="sub">The most common configuration mistakes in Flask apps.</p>
+    <div class="row g-4 mt-1">
+      {% for sev, id, title, text in [
+        ('critical','FS001','Debug mode','DEBUG=True or app.run(debug=True) exposes the interactive debugger and tracebacks.'),
+        ('high','FS002','Secret keys','Missing, default, short or hardcoded SECRET_KEY values that let attackers forge sessions.'),
+        ('medium','FS003','Session cookies','Secure, HttpOnly and SameSite flags that protect cookies from theft and CSRF.'),
+        ('medium','FS004','Security headers','CSP, X-Frame-Options, HSTS, nosniff and Referrer-Policy.'),
+        ('high','FS005','Exposed secrets','Passwords, tokens, API keys and credentialed URIs committed in source or config.'),
+      ] %}
+      <div class="col-md-6 col-lg-4"><div class="card-fs rule h-100">
+        <div class="d-flex justify-content-between mb-2"><span class="badge-sev sev-{{ sev }}">{{ sev|capitalize }}</span><span class="mono muted">{{ id }}</span></div>
+        <h5>{{ title }}</h5><p>{{ text }}</p>
+      </div></div>
+      {% endfor %}
+      <div class="col-md-6 col-lg-4"><div class="card-fs rule cta h-100">
+        <h5>Try it on a sample</h5>
+        <p>See a full report in seconds using the bundled apps.</p>
+        {% for s in samples %}
+        <form method="post" action="{{ url_for('main.scan_sample', name=s) }}" class="d-inline"><button class="btn-ghost btn-sm-fs">{{ s }}</button></form>
+        {% endfor %}
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="cta-band">
+      <div><h2>Ready to audit your app?</h2><p>Get a security score and fix list in under a minute.</p></div>
+      <a class="btn-fs btn-light-fs" href="{{ url_for('main.new_scan') }}">Start scanning →</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

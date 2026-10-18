@@ -1,0 +1,24 @@
+{% import "_findings.html" as ui %}
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>FlaskShield report #{{ scan.id }}</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:860px;margin:2rem auto;padding:0 1rem;color:#222}
+.cards{display:flex;gap:1rem;margin:1rem 0}.cards div{flex:1;border:1px solid #ddd;border-radius:6px;padding:.6rem;text-align:center}
+.cards b{display:block;font-size:1.6rem}
+.f{border:1px solid #ddd;border-left:5px solid #888;border-radius:4px;padding:.8rem 1rem;margin:.8rem 0;page-break-inside:avoid}
+.f.critical{border-left-color:#b00020}.f.high{border-left-color:#e65100}.f.medium{border-left-color:#f9a825}.f.low{border-left-color:#1976d2}
+.loc{color:#666;font-size:.85rem}
+</style></head><body>
+<h1>FlaskShield security report</h1>
+<p><strong>Target:</strong> {{ scan.name }}<br><strong>Scan #{{ scan.id }}</strong> · {{ scan.created_at }} UTC · {{ scan.files_scanned }} files analyzed (static analysis)</p>
+<div class="cards">
+<div><b>{{ scan.score }}</b>Score</div><div><b>{{ scan.critical }}</b>Critical</div>
+<div><b>{{ scan.high }}</b>High</div><div><b>{{ scan.medium }}</b>Medium</div><div><b>{{ scan.low }}</b>Low</div></div>
+{% for f in findings %}
+<div class="f {{ f.severity|lower }}">
+<h3>[{{ f.severity }}] {{ f.title }} <small>({{ f.rule_id }})</small></h3>
+<div class="loc">{{ f.file }}{% if f.line %}:{{ f.line }}{% endif %}</div>
+<p>{{ f.description }}</p><p><strong>Recommendation:</strong> {{ f.recommendation }}</p></div>
+{% else %}<p>No issues detected.</p>{% endfor %}
+</body></html>

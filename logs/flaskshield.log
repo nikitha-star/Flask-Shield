@@ -1,0 +1,6 @@
+2026-10-18 22:35:49,041 INFO flaskshield.scanner: scanned 2 files, 14 findings
+2026-10-18 22:35:49,046 INFO flaskshield.web: scan 1 complete for sample 'insecure_app'
+2026-10-18 22:35:59,394 INFO flaskshield.scanner: scanned 1 files, 0 findings
+2026-10-18 22:35:59,402 INFO flaskshield.web: scan 2 complete for sample 'secure_app'
+2026-10-18 22:36:23,544 INFO flaskshield.scanner: scanned 1 files, 2 findings
+2026-10-18 22:36:23,551 INFO flaskshield.web: scan 3 complete for upload 'run.py'
